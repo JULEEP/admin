@@ -1,34 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="React eCommerce Admin Dashboard" />
-    <meta property="og:title" content="JaisawalOffset - Admin Dashboard" />
 
-    <!-- Remove the favicon and any image link if needed -->
-    <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.png" /> -->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="hello" />
+  
+  <!-- Link to Cloudinary image as favicon -->
+  <link rel="icon" href="https://res.cloudinary.com/dxguqzge7/image/upload/v1682838912/Cloths_kpwmp2.jpg" type="image/jpeg" />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <title>JaiswalOffset</title>
+</head>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <title>JaisawalOffset | Admin Dashboard</title>
-  </head>
-  <body class="antialiased">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .register('./serviceworker.js')
-            .then((reg) => console.log('Success: ', reg.scope))
-            .catch((err) => console.log('Failure: ', err));
-        });
-      }
-    </script>
-  </body>
 </html>
