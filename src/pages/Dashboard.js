@@ -52,8 +52,8 @@ const Dashboard = () => {
 
         {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          <div className="bg-blue-500 text-white p-4 rounded-md shadow flex flex-col items-center">
-            <FiShoppingCart className="text-3xl md:text-4xl mb-2" />
+        <div className="bg-blue-500 text-white p-4 rounded-md shadow-lg shadow-red-500 flex flex-col items-center">
+        <FiShoppingCart className="text-3xl md:text-4xl mb-2" />
             <h2 className="text-sm md:text-md font-semibold">Today’s Orders</h2>
             <p className="text-lg md:text-2xl font-semibold">₹ 0</p>
           </div>

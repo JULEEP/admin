@@ -152,7 +152,6 @@ const ProductTable = () => {
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Discount</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Published</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Stock</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Details</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Action</th>
               </tr>
@@ -176,9 +175,6 @@ const ProductTable = () => {
                     <button onClick={() => toggleVisibility(product._id)} className="text-blue-500">
                       {product.published ? <FiEye className="inline-block" /> : <FiEyeOff className="inline-block" />}
                     </button>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
                   </td>
                   <td className="py-3 px-4 text-sm text-center">
                     <button onClick={() => viewProductDetails(product._id)} className="text-blue-500">
