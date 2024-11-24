@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // useNavigate import
-import { toast } from 'react-toastify'; // Remove toast.configure()
+import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const SignIn = () => {
@@ -18,33 +18,43 @@ const SignIn = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await fetch('https://admin-backend-rl94.onrender.com/api/admin/login', {
+      const response = await fetch(`https://admin-backend-rl94.onrender.com/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
-        const result = await response.json();
         toast.success('Login successful!', {
-          position: toast.POSITION.TOP_RIGHT,
+          position: "top-right", // Use string instead of toast.POSITION.TOP_RIGHT
           autoClose: 2500,
         });
 
-        // Store token in local storage (optional)
+        // Store token in local storage
         localStorage.setItem('authToken', result.token);
 
         // Redirect to dashboard
-        navigate('/dashboard'); // Use navigate instead of history.push
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2500);
       } else {
-        const result = await response.json();
-        setError(result.message || 'Invalid credentials.');
+        setError(result.message || 'Invalid email or password.');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('Error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

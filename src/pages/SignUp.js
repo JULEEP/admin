@@ -1,5 +1,6 @@
+// Frontend: SignUp Component (SignUp.js)
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // useNavigate import
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,25 +23,24 @@ const SignUp = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     setLoading(true);
-
+  
     // Basic validation
     const newErrors = {};
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.password) newErrors.password = 'Password is required';
     if (!formData.role) newErrors.role = 'Role is required';
-
+  
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setLoading(false);
       return;
     }
-
+  
     // API call to register admin
     try {
       const response = await fetch('https://admin-backend-rl94.onrender.com/api/admin/register', {
@@ -50,30 +50,32 @@ const SignUp = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok) {
+        // Use toast to show success message
         toast.success('Admin registered successfully!', {
-          position: toast.POSITION.TOP_RIGHT,
+          position: "top-right", // Use string instead of toast.POSITION.TOP_RIGHT
           autoClose: 2500,
         });
-
+  
         setTimeout(() => {
-          navigate('/dashboard'); // Use navigate instead of history.push
+          navigate('/dashboard'); // Redirect to dashboard
         }, 2500);
-
+  
         // Reset form fields
         setFormData({ name: '', email: '', password: '', role: '' });
       } else {
         setErrors({ general: result.message || 'This email is already registered!' });
       }
     } catch (error) {
+      console.error('Registration Error:', error); // Log the error to debug
       setErrors({ general: 'Failed to register admin. Please try again later.' });
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-200">
@@ -142,9 +144,7 @@ const SignUp = () => {
               onChange={handleChange}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="" disabled>
-                Select a role
-              </option>
+              <option value="" disabled>Select a role</option>
               <option value="Admin">Admin</option>
               <option value="User">User</option>
               <option value="Manager">Manager</option>
