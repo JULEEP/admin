@@ -135,7 +135,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
           </ul>
-          <span className="absolute bottom-4 left-2 w-full px-4">
+          <span className="absolute bottom-4 left-2 mb-35 w-full px-4">
             <button
               onClick={handleLogOut}
               className="w-full bg-blue-500 text-white p-3 rounded-lg flex items-center justify-center"

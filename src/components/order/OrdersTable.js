@@ -1,7 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrashAlt, FaEye } from 'react-icons/fa';
-import { useNavigate, Link } from 'react-router-dom'; // useNavigate import
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'; 
 import Sidebar from '../../pages/Sidebar';
+
+// Define a mapping for order statuses and their respective colors
+const statusColors = {
+  Draft: 'bg-gray-200 text-gray-800',
+  'Payment Pending': 'bg-yellow-100 text-yellow-800',
+  'Payment Confirmed': 'bg-blue-100 text-blue-800',
+  'Order Confirmed': 'bg-green-100 text-green-800',
+  'Print Ready': 'bg-indigo-100 text-indigo-800',
+  Shipped: 'bg-blue-200 text-blue-800',
+  Delivered: 'bg-green-200 text-green-800',
+  Processing: 'bg-orange-100 text-orange-800',
+  'Refund request': 'bg-red-100 text-red-800',
+  Confirmed: 'bg-green-100 text-green-800',
+  'Return Requested': 'bg-purple-100 text-purple-800',
+  Cancelled: 'bg-red-200 text-red-800',
+  CancelledRequest: 'bg-red-300 text-red-800',
+  'Refund Success': 'bg-teal-100 text-teal-800',
+  Placed: 'bg-yellow-200 text-yellow-800',
+  'Not Processed': 'bg-gray-100 text-gray-800',
+  Pending: 'bg-yellow-200 text-yellow-800',
+  Scheduled: 'bg-blue-100 text-blue-800',
+  'Unshipped': 'bg-gray-200 text-gray-800',
+  'Transferred to delivery partner': 'bg-blue-300 text-blue-800',
+  Received: 'bg-green-100 text-green-800',
+  'Cancel request': 'bg-red-300 text-red-800',
+  'Out for Delivery': 'bg-blue-300 text-blue-800',
+  Shipping: 'bg-blue-100 text-blue-800',
+  'Processing Refund': 'bg-pink-100 text-pink-800',
+};
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -48,6 +77,29 @@ const OrdersTable = () => {
         console.error('Error deleting order:', error);
         alert('An error occurred while deleting the order. Please try again.');
       }
+    }
+  };
+
+  // Handle order status change
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`https://admin-backend-rl94.onrender.com/api/orders/updateOrderStatus/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newStatus }),
+      });
+
+      if (response.ok) {
+        const updatedOrder = await response.json();
+        setOrders(orders.map(order => order._id === updatedOrder.orderId ? updatedOrder : order));
+      } else {
+        throw new Error('Failed to update order status');
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('An error occurred while updating the order status. Please try again.');
     }
   };
 
@@ -98,31 +150,50 @@ const OrdersTable = () => {
             <thead className="bg-gray-200">
               <tr>
                 <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-24">SR NO</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Time</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-72">Shipping Address</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-40">Phone</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Method</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-24">Amount</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Order ID</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-40">Order Type</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Currency</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Product</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Quantity</th>
                 <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Status</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Scheduled</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-32">Cancelled</th>
+                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Created At</th>
                 <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Action</th>
-                <th className="py-3 px-6 text-left text-sm font-semibold text-gray-700 w-48">Invoice</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="py-3 px-6 text-center text-sm text-gray-700">No orders available</td>
+                  <td colSpan="11" className="py-3 px-6 text-center text-sm text-gray-700">No orders available</td>
                 </tr>
               ) : (
                 visibleOrders.map((order, index) => (
                   <tr key={order._id} className="border-t border-gray-200">
                     <td className="py-3 px-6 text-sm text-gray-700">{index + 1}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.time}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.shippingAddress}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.phone}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.method}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.amount}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700">{order.status}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order._id}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order.orderType}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order.currency}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">
+                      {order.products.length > 0 ? order.products[0].product : 'No Product'}
+                    </td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order.products.length > 0 ? order.products[0].quantity : 0}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">
+                    <select
+                    value={order.orderStatus}
+                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                    className={`border p-1 rounded ${statusColors[order.orderStatus]}`}
+                  >
+                    {Object.keys(statusColors).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                    </td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order.isScheduled ? 'Yes' : 'No'}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{order.isCancelled ? 'Yes' : 'No'}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{new Date(order.createdAt).toLocaleString()}</td>
                     <td className="py-3 px-6 text-sm text-center">
                       <button
                         onClick={() => navigate(`/edit-order/${order._id}`)}
@@ -134,14 +205,6 @@ const OrdersTable = () => {
                         <FaTrashAlt className="inline-block" />
                       </button>
                     </td>
-                    <td className="py-3 px-6 text-sm text-center">
-                      <button
-                        onClick={() => navigate(`/view-invoice/${order._id}`)}
-                        className="text-blue-500 hover:text-blue-700 mx-2"
-                      >
-                        <FaEye className="inline-block" />
-                      </button>
-                    </td>
                   </tr>
                 ))
               )}
@@ -150,7 +213,6 @@ const OrdersTable = () => {
 
           {/* Pagination */}
           <div className="flex justify-center items-center mt-4">
-            {/* Previous button with circular shape */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -164,7 +226,6 @@ const OrdersTable = () => {
               {renderPageNumbers()}
             </div>
 
-            {/* Next button with circular shape */}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}

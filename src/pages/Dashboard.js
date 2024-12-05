@@ -9,6 +9,13 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [ordersToday, setOrdersToday] = useState(0);
+  const [ordersThisMonth, setOrdersThisMonth] = useState(0);
+  const [paymentPendingOrders, setPaymentPendingOrders] = useState(0);
+  const [paymentConfirmedOrders, setPaymentConfirmedOrders] = useState(0);
+  const [printReadyOrders, setPrintReadyOrders] = useState(0);
+
 
   const barData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -31,12 +38,20 @@ const Dashboard = () => {
     },
   };
 
+  // Fetch data from the backend
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await fetch('https://admin-backend-rl94.onrender.com/api/orders/get-orders');
         const data = await response.json();
-        setOrders(data);
+        setOrders(data.orders);
+        setTotalOrders(data.totalOrders);
+        setOrdersToday(data.totalOrdersToday);
+        setOrdersThisMonth(data.totalOrdersThisMonth);
+        setPaymentPendingOrders(data.paymentPendingOrdersCount);
+        setPaymentConfirmedOrders(data.paymentConfirmedOrdersCount);
+        setPrintReadyOrders(data.printReadyOrdersCount);
+
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
@@ -45,37 +60,36 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row">
-      <Sidebar />
+    <div className="flex flex-col lg:flex-row mb-20">
+      <Sidebar className="mt-4"/>
       <div className="flex-1 p-4 mt-16 bg-gray-100">
         <h4 className="text-lg md:text-2xl font-semibold">Dashboard Overview</h4>
 
         {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        <div className="bg-blue-500 text-white p-4 rounded-md shadow-lg shadow-red-500 flex flex-col items-center">
-        <FiShoppingCart className="text-3xl md:text-4xl mb-2" />
+          <div className="bg-blue-500 text-white p-4 rounded-md shadow-lg shadow-red-500 flex flex-col items-center">
+            <FiShoppingCart className="text-3xl md:text-4xl mb-2" />
             <h2 className="text-sm md:text-md font-semibold">Today’s Orders</h2>
-            <p className="text-lg md:text-2xl font-semibold">₹ 0</p>
+            <p className="text-lg md:text-2xl font-semibold">{ordersToday}</p> {/* Assuming ₹ 500 per order */}
           </div>
           <div className="bg-green-500 text-white p-4 rounded-md shadow flex flex-col items-center">
             <FiClock className="text-3xl md:text-4xl mb-2" />
             <h2 className="text-sm md:text-md font-semibold">This Month</h2>
-            <p className="text-lg md:text-2xl font-semibold">₹ 0</p>
+            <p className="text-lg md:text-2xl font-semibold">{ordersThisMonth}</p> {/* Assuming ₹ 500 per order */}
           </div>
           <div className="bg-orange-500 text-white p-4 rounded-md shadow flex flex-col items-center">
             <FiTruck className="text-3xl md:text-4xl mb-2" />
             <h2 className="text-sm md:text-md font-semibold">Total Orders</h2>
-            <p className="text-lg md:text-2xl font-semibold">₹ 0</p>
+            <p className="text-lg md:text-2xl font-semibold">{totalOrders}</p> {/* Assuming ₹ 500 per order */}
           </div>
         </div>
 
-        {/* Order Status Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          {[
-            { title: 'Total Orders', color: 'blue', count: 0, icon: <FiShoppingCart /> },
-            { title: 'Order Pending', color: 'yellow', count: 0, icon: <FiClock /> },
-            { title: 'Order Processing', color: 'orange', count: 0, icon: <FiTruck /> },
-            { title: 'Order Delivered', color: 'green', count: 0, icon: <FiCheckCircle /> },
+          {[ 
+            { title: 'Total Orders', color: 'blue', count: totalOrders, icon: <FiShoppingCart /> },
+            { title: 'Payment Pending', color: 'yellow', count: paymentPendingOrders, icon: <FiClock /> },
+            { title: 'Payment Confirmed', color: 'orange', count: paymentConfirmedOrders, icon: <FiTruck /> },
+            { title: 'Print Ready', color: 'green', count: printReadyOrders, icon: <FiCheckCircle /> },
           ].map(({ title, color, count, icon }, index) => (
             <div
               key={index}
@@ -123,7 +137,7 @@ const Dashboard = () => {
                   <td className="p-2 text-xs md:text-sm border">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="p-2 text-xs md:text-sm border">₹ {order.total}</td>
+                  <td className="p-2 text-xs md:text-sm border">₹ {order.paymentIntent.amount}</td>
                   <td className="p-2 text-xs md:text-sm border">
                     <div
                       className={`inline-block px-3 py-1 rounded-full text-xs md:text-sm font-semibold 
@@ -132,7 +146,7 @@ const Dashboard = () => {
                       ${order.status === 'Pending' ? 'bg-yellow-200 text-yellow-800' : ''}
                       ${order.status === 'Cancelled' ? 'bg-red-200 text-red-800' : ''}`}
                     >
-                      {order.status}
+                      {order.orderStatus}
                     </div>
                   </td>
                 </tr>

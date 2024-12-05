@@ -6,15 +6,17 @@ import Sidebar from './Sidebar';
 const Customers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState(''); // Add state for search term
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
-  // Fetch users on component mount
+  // Fetch users on component mount or when search term changes
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('https://admin-backend-rl94.onrender.com/api/user/');
+        // Add search query to API request
+        const response = await fetch(`https://admin-backend-rl94.onrender.com/api/users?search=${search}`);
         const data = await response.json();
         setUsers(data);
         setLoading(false);
@@ -25,7 +27,7 @@ const Customers = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [search]); // Re-run when the search term changes
 
   // Handle user deletion
   const handleDelete = async (id) => {
@@ -62,7 +64,7 @@ const Customers = () => {
     setUsers(updatedUsers);
 
     try {
-      const response = await fetch(`https://admin-backend-rl94.onrender.com/api/user/${id}`, {
+      const response = await fetch(`https://admin-backend-rl94.onrender.com/api/users/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -123,6 +125,17 @@ const Customers = () => {
       <Sidebar />
       <div className="flex-1 p-6 bg-gray-50 ml-30 flex justify-center">
         <div className="w-full max-w-7xl">
+          {/* Search Bar */}
+          <div className="mb-4">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by Name, Email, Phone or Status"
+              className="p-2 border border-gray-300 rounded-md w-full md:w-1/2"
+            />
+          </div>
+
           <table className="min-w-full table-auto border-collapse rounded-lg overflow-hidden">
             <thead className="bg-gray-200">
               <tr>
@@ -140,7 +153,7 @@ const Customers = () => {
               {visibleUsers.map((user) => (
                 <tr key={user._id} className="border-t border-gray-200">
                   <td className="py-3 px-6 text-sm text-gray-700">{user._id}</td>
-                  <td className="py-3 px-6 text-sm text-gray-700">{user.name}</td>
+                  <td className="py-3 px-6 text-sm text-gray-700">{user.fullName}</td>
                   <td className="py-3 px-6 text-sm text-gray-700">{user.email}</td>
                   <td className="py-3 px-6 text-sm text-gray-700">{user.phone}</td>
                   <td className="py-3 px-6 text-sm text-gray-700">{user.role}</td>
@@ -176,7 +189,6 @@ const Customers = () => {
 
           {/* Pagination */}
           <div className="flex justify-center items-center mt-4">
-            {/* Previous button with circular shape */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -185,12 +197,10 @@ const Customers = () => {
               &lt;
             </button>
 
-            {/* Page Numbers */}
             <div className="flex mx-2">
               {renderPageNumbers()}
             </div>
 
-            {/* Next button with circular shape */}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
