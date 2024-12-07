@@ -96,7 +96,7 @@ const Sidebar = () => {
             </li>
             <li className="mb-8">
               <NavLink
-                to="/orders"
+                to="/orderTable"
                 className="flex items-center text-gray-800 hover:text-green-500 font-semibold"
                 activeClassName="text-green-500"
                 onClick={() => setIsSidebarOpen(false)}
