@@ -58,7 +58,7 @@ const GetOrders = () => {
     try {
       // Make the API call to update order status
       const response = await axios.put(
-        `http://localhost:4000/api/orders/updateOrderStatus/${orderId}`,
+        `https://admin-backend-rl94.onrender.com/api/orders/updateOrderStatus/${orderId}`,
         { newStatus }
       );
 
@@ -82,7 +82,7 @@ const GetOrders = () => {
   const handleInvoiceDownload = async (orderId) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/orders/download-invoice/${orderId}`,
+        `https://admin-backend-rl94.onrender.com/api/orders/download-invoice/${orderId}`,
         { responseType: 'blob' } // To handle the PDF file as blob
       );
 
