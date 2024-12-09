@@ -78,6 +78,25 @@ const GetOrders = () => {
     }
   };
 
+  // Function to download the invoice PDF
+  const handleInvoiceDownload = async (orderId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/api/orders/download-invoice/${orderId}`,
+        { responseType: 'blob' } // To handle the PDF file as blob
+      );
+
+      // Create a link element to trigger the download
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(response.data);
+      link.download = `invoice-${orderId}.pdf`; // Specify the file name
+      link.click();
+    } catch (err) {
+      console.error('Error downloading invoice:', err);
+      setError('Failed to download invoice');
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -104,14 +123,14 @@ const GetOrders = () => {
           <table>
             <thead>
               <tr>
-                <th>Order ID</th>
-                <th>Product ID</th>
+                <th>OrderID</th>
+                <th>PrductID</th>
                 <th>Quantity</th>
-                <th>Order Status</th>
-                <th>Order Type</th>
-                <th>Created At</th>
-                <th>Paid At</th>
-                <th>Delivery Charge</th>
+                <th>OrderStatus</th>
+                <th>OrderType</th>
+                <th>CreatedAt</th>
+                <th>PaidAt</th>
+                <th>DeliveryCharge</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -119,41 +138,47 @@ const GetOrders = () => {
               {ordersData.orders.map((order) =>
                 order.products.map((product, index) => (
                   <tr key={`${order._id}-${product._id}`}>
+                    {/* Show Order ID for every row */}
                     <td>{order._id}</td>
+                    {/* Show Product ID for each product */}
                     <td>{product.product}</td>
+                    {/* Show Quantity for each product */}
                     <td>{product.quantity}</td>
 
-                    {index === 0 ? (
-                      <>
-                        <td rowSpan={order.products.length}>{order.orderStatus}</td>
-                        <td rowSpan={order.products.length}>{order.orderType}</td>
-                        <td rowSpan={order.products.length}>
-                          {new Date(order.createdAt).toLocaleString()}
-                        </td>
-                        <td rowSpan={order.products.length}>
-                          {order.paidAt ? new Date(order.paidAt).toLocaleString() : 'N/A'}
-                        </td>
-                        <td rowSpan={order.products.length}>
-                          {order.deliveryCharge ? order.deliveryCharge : 0}
-                        </td>
-                      </>
-                    ) : null}
+                    {/* Show Order Status dropdown for each row */}
+                    <td>
+                      <select
+                        value={order.orderStatus}
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      >
+                        {orderStatuses.map(status => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
 
-                    {/* Add a dropdown for changing the order status */}
-                    {index === 0 && (
-                      <td rowSpan={order.products.length}>
-                        <select
-                          value={order.orderStatus}
-                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        >
-                          {orderStatuses.map(status => (
-                            <option key={status} value={status}>
-                              {status}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                    )}
+                    {/* Show Order Type for every row */}
+                    <td>{order.orderType}</td>
+
+                    {/* Show Created At for every row */}
+                    <td>{new Date(order.createdAt).toLocaleString()}</td>
+
+                    {/* Show Paid At for every row */}
+                    <td>{order.paidAt ? new Date(order.paidAt).toLocaleString() : 'N/A'}</td>
+
+                    {/* Show Delivery Charge for every row */}
+                    <td>{order.deliveryCharge ? order.deliveryCharge : 0}</td>
+
+                    {/* Action column with Invoice button */}
+                    <td>
+                      <button 
+                        onClick={() => handleInvoiceDownload(order._id)} 
+                        className="invoice-button">
+                        Invoice
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
