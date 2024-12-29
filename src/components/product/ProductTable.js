@@ -20,7 +20,7 @@ const ProductTable = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('https://admin-backend-rl94.onrender.com/api/products/');
+        const response = await fetch('https://admin-backend-rl94.onrender.com/api/products/getall/');
         const data = await response.json();
         setProducts(data);
         setLoading(false);
@@ -159,7 +159,7 @@ const ProductTable = () => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar style={{ marginRight: '20px' }} />
+      <Sidebar style={{ marginRight: '60px'}} />
       <div className="flex-1 p-6 bg-gray-50 mt-2">
         {/* Add Product Button */}
         <div className="flex justify-end sm:justify-start mb-4">

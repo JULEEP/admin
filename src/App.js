@@ -25,6 +25,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import UserDetails from './pages/UserDetails';
 import GetOrders from './pages/GetOrders';
+import Sidebar from './pages/Sidebar';
 
 const App = () => {
   return (
@@ -54,6 +55,8 @@ const App = () => {
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/user-details/:id" element={<UserDetails />} /> {/* Add route for user details */}
           <Route path="/orderTable" element={<GetOrders />} />
+          <Route path="/sidebaar" element={<Sidebar />} />
+
 
           {/* Catch-all for undefined routes */}
           <Route path="*" element={<Page404 />} />

@@ -44,7 +44,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-100 h-screen"> {/* Set the height to 100vh */}
       {/* Hamburger Icon for Small Screens */}
       <button
         className="lg:hidden fixed top-0 left-0 z-10 text-gray-800 p-2"
@@ -55,9 +55,9 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-white text-gray-800 shadow-lg transition-transform transform lg:translate-x-0 lg:static ${
+        className={`fixed top-0 left-0 h-screen w-64 bg-white text-gray-800 transition-transform transform lg:translate-x-0 lg:static ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        }`} // Set height to 100vh
       >
         <div className="p-5">
           <a href="/dashboard">
