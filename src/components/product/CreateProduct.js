@@ -11,7 +11,11 @@ const CreateProduct = () => {
     moq: '',
     originalPrice: '',
     discountedPrice: '',
-    subcategory: '', // Added subcategory field
+    subcategory: '',
+    paperSizes: '',
+    paperNames: '',
+    colors: '',
+    quantities: '',
     images: [],
   });
 
@@ -37,6 +41,14 @@ const CreateProduct = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validation: Ensure paper sizes, names, colors, and quantities are not empty
+    const { paperSizes, paperNames, colors, quantities } = productData;
+    if (!paperSizes || !paperNames || !colors || !quantities) {
+      setError('Please fill in all the fields for Paper Sizes, Names, Colors, and Quantities.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -69,9 +81,13 @@ const CreateProduct = () => {
           moq: '',
           originalPrice: '',
           discountedPrice: '',
-          subcategory: '', // Reset subcategory
+          subcategory: '',
+          paperSizes: '',
+          paperNames: '',
+          colors: '',
+          quantities: '',
           images: [],
-        }); // Reset form data
+        });
       } else {
         throw new Error(data.message || 'Something went wrong.');
       }
@@ -138,7 +154,7 @@ const CreateProduct = () => {
             />
           </div>
 
-          {/* Size & Color in one row */}
+          {/* Size & Color */}
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm mb-1">Size (in ft)</label>
@@ -163,7 +179,7 @@ const CreateProduct = () => {
             </div>
           </div>
 
-          {/* MOQ & Price in one row */}
+          {/* MOQ & Price */}
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm mb-1">MOQ (Minimum Order Quantity)</label>
@@ -200,48 +216,74 @@ const CreateProduct = () => {
             />
           </div>
 
-          {/* Subcategory */}
-          <div className="mb-4">
-            <label className="block text-sm mb-1">Subcategory</label>
-            <input
-              type="text"
-              name="subcategory"
-              value={productData.subcategory}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md"
-            />
+          {/* Paper Sizes, Names, Colors, Quantities */}
+          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm mb-1">Paper Sizes (comma separated)</label>
+              <input
+                type="text"
+                name="paperSizes"
+                value={productData.paperSizes}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Paper Names (comma separated)</label>
+              <input
+                type="text"
+                name="paperNames"
+                value={productData.paperNames}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Colors (comma separated)</label>
+              <input
+                type="text"
+                name="colors"
+                value={productData.colors}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Quantities (comma separated)</label>
+              <input
+                type="text"
+                name="quantities"
+                value={productData.quantities}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+            </div>
           </div>
 
           {/* Images */}
           <div className="mb-4">
-            <label className="block text-sm mb-1">Images</label>
-            <div className="relative">
-              <input
-                type="file"
-                name="images"
-                onChange={handleImageChange}
-                multiple
-                className="w-full px-4 py-2 border rounded-md opacity-0 absolute top-0 left-0"
-              />
-              <button
-                type="button"
-                onClick={() => document.querySelector('input[type="file"]').click()}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-md"
-              >
-                Choose Files
-              </button>
-            </div>
+            <label className="block text-sm mb-1">Product Images</label>
+            <input
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              className="w-full px-4 py-2 border rounded-md"
+            />
           </div>
-        </div>
 
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-400"
-          >
-            {loading ? 'Adding Product...' : 'Add Product'}
-          </button>
+          {/* Submit Button */}
+          <div className="mb-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md"
+            >
+              {loading ? 'Creating Product...' : 'Create Product'}
+            </button>
+          </div>
         </div>
       </form>
     </div>
